@@ -1010,6 +1010,22 @@ function ArrayIter:enumerate()
   return self
 end
 
+function Iter:min()
+  return 1
+end
+
+function ArrayIter:min()
+  local min_comp = function (a, b)
+    if type(a) == "number" and type(b) == "number" then
+      return math.min(a, b)
+    else
+      return a < b and a or b
+    end
+  end
+
+  return self:fold(self:next(), min_comp)
+end
+
 --- Creates a new Iter object from a table or other |iterable|.
 ---
 ---@param src table|function Table or iterator to drain values from

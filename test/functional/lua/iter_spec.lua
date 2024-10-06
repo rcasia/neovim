@@ -273,6 +273,60 @@ describe('vim.iter', function()
     end
   end)
 
+  it("min()", function ()
+
+    do
+      local q = { 5, 4, 3, 2, 1  }
+      local it = vim.iter(q)
+      eq(1, it:min())
+    end
+
+    do
+      local q = { math.huge, math.pi }
+      local it = vim.iter(q)
+      eq(math.pi, it:min())
+    end
+
+    do
+      local q = { 3, nil, 2 }
+      local it = vim.iter(q)
+      eq(2, it:min())
+    end
+
+    do
+      local q = { "alpha", "beta" }
+      local it = vim.iter(q)
+      eq("alpha", it:min())
+    end
+
+    do
+      local q = { true, false }
+      local it = vim.iter(q)
+      matches('attempt to compare two boolean values', pcall_err(it.min, it))
+    end
+
+    local func = function () end
+    do
+      local q = { func, 2 }
+      local it = vim.iter(q)
+      matches('attempt to compare function with number', pcall_err(it.min, it))
+    end
+
+    do
+      local q = { {1}, {2} }
+      local it = vim.iter(q)
+      matches('attempt to compare two table values', pcall_err(it.min, it))
+    end
+
+    local mt = {__lt = function(a, b) return a.valor < b.valor end};
+    local obj1, obj2 = setmetatable({valor = 5}, mt), setmetatable({valor = 10}, mt)
+    do
+      local q = { obj1, obj2 }
+      local it = vim.iter(q)
+      eq(obj1, it:min())
+    end
+  end)
+
   it('any()', function()
     local function odd(v)
       return v % 2 ~= 0
@@ -550,4 +604,5 @@ describe('vim.iter', function()
       { item_3 = 'test' },
     }, output)
   end)
+
 end)
